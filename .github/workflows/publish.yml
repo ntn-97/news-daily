@@ -1,0 +1,64 @@
+# Lấy tin + giá rồi đăng bản tin lên GitHub Pages, 30 phút / lần.
+# Dữ liệu lượt trước (state.json) nằm ngay trên trang đã đăng; script tải về đọc tiếp, nên không commit gì vào repo.
+name: Đăng bản tin
+
+on:
+  schedule:
+    # Tránh phút 0: lúc đó GitHub đông máy, lịch hay bị trễ lâu hơn
+    - cron: '7,37 * * * *'
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+  actions: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - name: Kiểm tra (chỉ khi đẩy code)
+        if: github.event_name != 'schedule'
+        run: npm test
+      - id: pages
+        uses: actions/configure-pages@v6
+      - run: npm run build:static
+      - name: Lấy tin và giá
+        run: npm run publish:brief
+        env:
+          SITE_URL: ${{ steps.pages.outputs.base_url }}
+      - uses: actions/upload-pages-artifact@v5
+        with:
+          path: dist-static
+      # Repo công khai không có commit trong 60 ngày thì GitHub tự tắt lịch chạy. Bật lại mỗi lượt cho chắc;
+      # nếu vẫn bị tắt, GitHub gửi email — vào tab Actions bấm "Enable workflow"
+      - name: Giữ lịch chạy
+        if: github.event_name == 'schedule'
+        continue-on-error: true
+        run: gh api -X PUT "repos/${{ github.repository }}/actions/workflows/publish.yml/enable"
+        env:
+          GH_TOKEN: ${{ github.token }}
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v5
