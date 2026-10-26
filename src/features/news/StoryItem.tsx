@@ -74,7 +74,7 @@ function Related({ story, reading }: { story: Story; reading: Reading }) {
         <ChevronDown className={cn('size-3.5 transition-transform', open && 'rotate-180')} />
       </button>
       {open && (
-        <ul className="mt-1.5 space-y-1 border-l-2 border-border pl-3">
+        <ul className="mt-1.5 space-y-1 border-l-2 border-primary/30 pl-3">
           {story.related.map((r) => (
             <li key={r.link} className="text-sm leading-snug">
               <a
@@ -110,7 +110,7 @@ function TitleLink({ story, reading, className }: ItemProps & { className?: stri
       onClick={() => reading.markRead(story.id)}
       onAuxClick={() => reading.markRead(story.id)}
       className={cn(
-        'font-serif tracking-[-0.005em] text-pretty decoration-sun/60 decoration-2 underline-offset-[3px] hover:underline',
+        'font-serif tracking-[-0.005em] text-pretty decoration-primary/60 decoration-2 underline-offset-[3px] hover:underline',
         read && 'text-muted-foreground',
         className,
       )}

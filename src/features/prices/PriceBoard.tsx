@@ -52,7 +52,9 @@ function PriceCard({
     <section className="flex flex-col rounded-xl bg-card ring-1 ring-foreground/8">
       <header className="flex items-center justify-between gap-2 px-4 pt-3.5 pb-2">
         <h3 className="flex items-center gap-2 text-xs font-semibold tracking-[0.12em] text-muted-foreground uppercase">
-          <span className="text-sun [&_svg]:size-4">{icon}</span>
+          <span className="flex size-6 items-center justify-center rounded-md bg-primary/10 text-primary [&_svg]:size-3.5">
+            {icon}
+          </span>
           {title}
         </h3>
         <span className="truncate text-xs text-muted-foreground">{source}</span>

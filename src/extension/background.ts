@@ -33,7 +33,7 @@ async function updateBadge(brief: Brief) {
   const openedAt = got[EXT_OPENED_KEY] as number | undefined
   if (!openedAt) return
   const n = brief.sections.reduce((sum, s) => sum + s.stories.filter((x) => Date.parse(x.publishedAt) > openedAt).length, 0)
-  await chrome.action.setBadgeBackgroundColor({ color: '#e8742a' })
+  await chrome.action.setBadgeBackgroundColor({ color: '#c3610d' })
   await chrome.action.setBadgeTextColor({ color: '#ffffff' })
   await chrome.action.setBadgeText({ text: n === 0 ? '' : n > 99 ? '99+' : String(n) })
 }

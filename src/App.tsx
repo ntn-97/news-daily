@@ -24,15 +24,20 @@ function useMinuteClock() {
   return now
 }
 
+/** Mặt trời mọc, cùng hình với icon ứng dụng (public/icons/icon.svg). Vẽ nửa hình tròn thay vì che bằng ô màu nền
+ *  để đặt được trên dải nền chuyển màu ở đầu trang */
 function SunMark({ className }: { className?: string }) {
   return (
-    <svg viewBox="0 0 32 32" aria-hidden className={className}>
-      <circle cx="16" cy="19" r="7.5" fill="currentColor" />
-      {[-60, -30, 0, 30, 60].map((deg) => (
-        <rect key={deg} x="15" y="3" width="2" height="5" rx="1" fill="currentColor" transform={`rotate(${deg} 16 19)`} />
-      ))}
-      <rect x="2" y="21" width="28" height="11" className="fill-background" />
-      <rect x="4" y="22.5" width="24" height="2" rx="1" fill="currentColor" />
+    <svg viewBox="4 4 56 56" aria-hidden className={className}>
+      <g stroke="currentColor" strokeWidth="4.5" strokeLinecap="round">
+        <line x1="32" y1="22" x2="32" y2="15" />
+        <line x1="44.21" y1="26.45" x2="48.71" y2="21.08" />
+        <line x1="19.79" y1="26.45" x2="15.29" y2="21.08" />
+        <line x1="50.58" y1="37.05" x2="57.43" y2="35.59" />
+        <line x1="13.42" y1="37.05" x2="6.57" y2="35.59" />
+      </g>
+      <path d="M18 41 a14 14 0 0 1 28 0 z" fill="currentColor" />
+      <rect x="11" y="45" width="42" height="4.5" rx="2.25" fill="currentColor" />
     </svg>
   )
 }
@@ -54,7 +59,7 @@ function Masthead({
     <header className="mx-auto max-w-6xl px-4 pt-6 sm:px-6 sm:pt-8">
       <div className="flex items-start justify-between gap-4">
         <div className="flex items-center gap-3">
-          <SunMark className="size-10 shrink-0 text-sun sm:size-12" />
+          <SunMark className="size-10 shrink-0 text-primary sm:size-12" />
           <div>
             <h1 className="font-serif text-3xl leading-none font-bold tracking-tight sm:text-[2.6rem]">Bản Tin Sáng</h1>
             <p className="mt-1.5 text-sm text-muted-foreground">
@@ -107,7 +112,7 @@ function SectionNav({ brief, reading }: { brief: Brief; reading: Reading }) {
           <a
             key={l.id}
             href={`#${l.id}`}
-            className="flex shrink-0 items-center gap-1.5 rounded-full px-3 py-1.5 text-sm font-medium whitespace-nowrap hover:bg-muted"
+            className="flex shrink-0 items-center gap-1.5 rounded-full px-3 py-1.5 text-sm font-medium whitespace-nowrap transition-colors hover:bg-primary/10 hover:text-primary"
           >
             {l.label}
             {l.count > 0 && (
@@ -186,8 +191,10 @@ export default function App() {
 
   return (
     <div className="min-h-svh">
-      <Masthead brief={brief.data} now={now} reading={reading} refresh={refresh} />
-      <div className="h-4" />
+      {/* Dải xanh nhạt mờ dần sau tiêu đề: mở trang là thấy ngay sắc xanh buổi sớm */}
+      <div className="bg-linear-to-b from-primary/12 to-transparent pb-4">
+        <Masthead brief={brief.data} now={now} reading={reading} refresh={refresh} />
+      </div>
       {brief.isError ? (
         <div className="mx-auto flex max-w-xl flex-col items-center gap-2 px-4 py-20 text-center">
           <ServerCrash className="size-8 text-muted-foreground" />

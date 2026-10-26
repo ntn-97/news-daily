@@ -36,7 +36,7 @@ export function SectionBlock({ section, reading }: { section: Section; reading: 
 
   return (
     <section id={section.id} aria-labelledby={`${section.id}-title`} className="scroll-mt-20">
-      <header className="mb-2 flex flex-wrap items-end justify-between gap-x-4 gap-y-2 border-t-[3px] border-foreground pt-3">
+      <header className="mb-2 flex flex-wrap items-end justify-between gap-x-4 gap-y-2 border-t-[3px] border-primary pt-3">
         <div>
           <h2 id={`${section.id}-title`} className="font-serif text-[1.75rem] leading-tight font-bold sm:text-3xl">
             {section.title}
@@ -53,7 +53,9 @@ export function SectionBlock({ section, reading }: { section: Section; reading: 
             }}
             className={cn(
               'rounded-full border px-3 py-1 text-xs font-medium transition-colors',
-              onlyTag ? 'border-foreground bg-foreground text-background' : 'hover:bg-muted',
+              onlyTag
+                ? 'border-primary bg-primary text-primary-foreground'
+                : 'hover:border-primary/40 hover:bg-primary/10 hover:text-primary',
             )}
           >
             {FILTER_LABEL[tag]} · {tagCount}
@@ -89,7 +91,11 @@ export function SectionBlock({ section, reading }: { section: Section; reading: 
           {stories.length > PAGE && (
             <div className="mt-3 flex justify-center">
               {shown < stories.length ? (
-                <Button variant="outline" onClick={() => setShown((n) => n + PAGE)}>
+                <Button
+                  variant="outline"
+                  onClick={() => setShown((n) => n + PAGE)}
+                  className="border-primary/30 text-primary hover:bg-primary/10 hover:text-primary"
+                >
                   Xem thêm {Math.min(PAGE, stories.length - shown)} tin
                 </Button>
               ) : (

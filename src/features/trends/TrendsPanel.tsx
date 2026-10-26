@@ -12,7 +12,7 @@ export function TrendsPanel({ trends }: { trends: Trend[] }) {
         id="trends-title"
         className="mb-2 flex items-center gap-2 text-xs font-semibold tracking-[0.12em] text-muted-foreground uppercase"
       >
-        <Search className="size-3.5 text-sun" />
+        <Search className="size-3.5 text-primary" />
         Mọi người đang tìm trên Google
       </h2>
       <ol className="grid gap-x-6 gap-y-1 sm:grid-cols-2 lg:grid-cols-3">
@@ -26,9 +26,17 @@ export function TrendsPanel({ trends }: { trends: Trend[] }) {
                 href={href}
                 target="_blank"
                 rel="noreferrer"
-                className="group flex items-baseline gap-2.5 rounded-md py-1.5 hover:bg-muted/60 sm:px-1.5"
+                className="group flex items-baseline gap-2.5 rounded-md py-1.5 hover:bg-primary/8 sm:px-1.5"
               >
-                <span className="tabular w-4 shrink-0 text-right text-xs text-muted-foreground">{i + 1}</span>
+                {/* Ba từ được tìm nhiều nhất in số xanh đậm cho nổi */}
+                <span
+                  className={cn(
+                    'tabular w-4 shrink-0 text-right text-xs',
+                    i < 3 ? 'font-bold text-primary' : 'text-muted-foreground',
+                  )}
+                >
+                  {i + 1}
+                </span>
                 <span className="min-w-0">
                   <span className="font-semibold group-hover:underline">{t.keyword}</span>
                   {t.traffic && <span className="ml-1.5 text-xs text-muted-foreground">{t.traffic} lượt</span>}
