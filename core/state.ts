@@ -7,7 +7,7 @@
  * Giữ bài 3 ngày (bản tin chỉ xem 30 giờ, phần dư để biết bài nào đã thấy) và giá 10 ngày
  * (đủ so "hôm qua"). Cỡ file khoảng 1–2 MB.
  */
-import type { CrudeOil, SourceError, Trend } from '../shared/types.ts'
+import type { CrudeOil, MarketIndex, MarketNote, MarketStock, SourceError, Trend } from '../shared/types.ts'
 import type { RawFuelRow, RawFxRow, RawGoldRow } from './prices.ts'
 import type { Article } from './rank.ts'
 
@@ -17,7 +17,7 @@ export interface PricePoint {
 }
 
 export interface State {
-  v: 1
+  v: 2
   articles: Article[]
   /** Giá theo thời gian của từng mã (vd. "gold-sjc-sell"). Giá không đổi thì tối đa một điểm / giờ */
   prices: Record<string, PricePoint[]>
@@ -28,16 +28,32 @@ export interface State {
   fx: { rows: RawFxRow[]; sourceTime: string } | null
   fuel: { rows: RawFuelRow[]; sourceTime: string; crude: CrudeOil[] } | null
   trends: Trend[]
+  /** Chỉ số của phiên gần nhất; danh sách tăng / giảm có phiên riêng (xem MarketBoard.moversSession) */
+  market: {
+    session: string
+    time: string
+    indices: MarketIndex[]
+    moversSession: string
+    gainers: MarketStock[]
+    losers: MarketStock[]
+  } | null
+  /** Giá phiên gần nhất của các mã được chuyên gia nhắc tới */
+  marketQuotes: Record<string, MarketStock>
+  /** RSS "Nhận định thị trường" */
+  marketOutlook: MarketNote[]
+  /** RSS "Ý kiến chuyên gia"; `tickers` chỉ còn mã VNDirect xác nhận — bài không có mã là nhận định chung */
+  marketExpert: MarketNote[]
   /** Lần tải giá gần nhất — để không gọi VCB dày hơn 5 phút, giá xăng dày hơn 2 giờ, kể cả sau khởi động lại */
   pricesFetchedAt: string | null
   fuelFetchedAt: string | null
+  marketFetchedAt: string | null
   refreshedAt: string | null
   errors: SourceError[]
 }
 
 export function emptyState(): State {
   return {
-    v: 1,
+    v: 2,
     articles: [],
     prices: {},
     changes: {},
@@ -46,18 +62,28 @@ export function emptyState(): State {
     fx: null,
     fuel: null,
     trends: [],
+    market: null,
+    marketQuotes: {},
+    marketOutlook: [],
+    marketExpert: [],
     pricesFetchedAt: null,
     fuelFetchedAt: null,
+    marketFetchedAt: null,
     refreshedAt: null,
     errors: [],
   }
 }
 
-/** Đọc state đã lưu; khuôn lạ (phiên bản cũ, file hỏng) thì bắt đầu lại từ đầu */
+/**
+ * Đọc state đã lưu; khuôn lạ (file hỏng, phiên bản không biết) thì bắt đầu lại từ đầu.
+ * v1 chỉ thiếu các trường chứng khoán (v2 thêm vào), nên nâng lên v2 bằng giá trị trống thay vì bỏ cả
+ * lịch sử giá 10 ngày — mất lịch sử thì mũi tên so "hôm qua" biến mất một ngày.
+ */
 export function reviveState(raw: unknown): State {
-  if (raw && typeof raw === 'object' && (raw as State).v === 1 && Array.isArray((raw as State).articles)) {
-    return { ...emptyState(), ...(raw as State) }
-  }
+  if (!raw || typeof raw !== 'object' || !Array.isArray((raw as State).articles)) return emptyState()
+  const v = (raw as { v?: unknown }).v
+  if (v === 2) return { ...emptyState(), ...(raw as State) }
+  if (v === 1) return { ...emptyState(), ...(raw as Omit<State, 'v'>), v: 2 }
   return emptyState()
 }
 

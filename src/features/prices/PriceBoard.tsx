@@ -35,7 +35,7 @@ function Delta({ quote, format, className }: { quote: Quote; format: (n: number)
   )
 }
 
-function PriceCard({
+export function PriceCard({
   icon,
   title,
   source,

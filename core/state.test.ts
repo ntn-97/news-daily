@@ -58,6 +58,17 @@ describe('reviveState', () => {
     expect(reviveState(null)).toEqual(emptyState())
     expect(reviveState({ v: 0, articles: [] })).toEqual(emptyState())
     expect(reviveState('rác')).toEqual(emptyState())
+    expect(reviveState({ v: 3, articles: [] })).toEqual(emptyState())
+  })
+  it('state v1 (chưa có chứng khoán) nâng lên v2, giữ nguyên bài và lịch sử giá', () => {
+    const v1 = { ...emptyState(), v: 1 } as Record<string, unknown>
+    for (const k of ['market', 'marketQuotes', 'marketOutlook', 'marketExpert', 'marketFetchedAt']) delete v1[k]
+    v1.prices = { 'gold-sjc-sell': [{ at: iso(0), value: 142_000_000 }] }
+    const s = reviveState(v1)
+    expect(s.v).toBe(2)
+    expect(s.prices['gold-sjc-sell']).toHaveLength(1)
+    expect(s.market).toBeNull()
+    expect(s.marketExpert).toEqual([])
   })
 })
 

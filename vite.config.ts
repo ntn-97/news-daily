@@ -13,6 +13,7 @@ import { defineConfig } from 'vitest/config'
 
 import { GOLD_API_URL, PNJ_URL, VCB_URL, WEBGIA_FUEL_URL } from './core/prices.ts'
 import { FEEDS, GOOGLE_TRENDS_URL } from './core/sources.ts'
+import { VIETSTOCK_EXPERT_URL, VIETSTOCK_OUTLOOK_URL, VND_API } from './core/stocks.ts'
 
 const pkg = JSON.parse(readFileSync(new URL('./package.json', import.meta.url), 'utf8')) as {
   version: string
@@ -21,7 +22,17 @@ const pkg = JSON.parse(readFileSync(new URL('./package.json', import.meta.url), 
 
 /** manifest.json của extension. Quyền truy cập trang lấy thẳng từ danh sách nguồn: thêm báo là tự có quyền */
 function extensionManifest(): Plugin {
-  const hosts = [...FEEDS.map((f) => f.url), GOOGLE_TRENDS_URL, PNJ_URL, GOLD_API_URL, VCB_URL, WEBGIA_FUEL_URL]
+  const hosts = [
+    ...FEEDS.map((f) => f.url),
+    GOOGLE_TRENDS_URL,
+    PNJ_URL,
+    GOLD_API_URL,
+    VCB_URL,
+    WEBGIA_FUEL_URL,
+    VND_API,
+    VIETSTOCK_OUTLOOK_URL,
+    VIETSTOCK_EXPERT_URL,
+  ]
   const icons = { '16': 'icons/icon-16.png', '32': 'icons/icon-32.png', '48': 'icons/icon-48.png', '128': 'icons/icon-128.png' }
   const manifest = {
     manifest_version: 3,

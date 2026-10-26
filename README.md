@@ -1,7 +1,8 @@
 # Bản Tin Sáng
 
 Trang tin cá nhân đọc mỗi sáng: tin nóng trên mạng xã hội, drama & phốt, thế giới & địa chính trị,
-trong nước, giá vàng, giá xăng dầu, tỷ giá, và từ khoá người Việt đang tìm nhiều trên Google.
+trong nước, giá vàng, giá xăng dầu, tỷ giá, chứng khoán trong nước, và từ khoá người Việt đang tìm nhiều
+trên Google.
 
 Tin cùng một việc từ nhiều báo được gộp làm một ("4 báo cùng đưa tin"); càng nhiều báo đưa, tin càng
 được xếp cao. Tin đăng sau lần đọc trước có dấu **Mới**, tin đã bấm đọc bị làm mờ.
@@ -70,6 +71,8 @@ Lệnh khác: `npm test` · `npm run typecheck` · `npm run lint` · `npm run bu
 | Vàng thế giới | `api.gold-api.com/price/XAU`, quy ra đồng / lượng theo giá bán USD của Vietcombank |
 | Tỷ giá | XML Vietcombank (VCB yêu cầu không gọi dày hơn 5 phút / lần) |
 | Xăng dầu | Bảng Petrolimex chép trên `webgia.com/gia-xang-dau/petrolimex/`, kèm dầu thô WTI / Brent |
+| Chứng khoán | API công khai VNDirect (`api-finfo.vndirect.com.vn/v4`): VN-Index, VN30, HNX, UPCoM, số mã tăng / giảm; 5 mã HOSE tăng / giảm mạnh nhất trong số mã khớp lệnh ≥ 10 tỷ (thử ngày 26/10/2026) |
+| Nhận định, mã chuyên gia nhắc tới | RSS Vietstock "Nhận định thị trường" và "Ý kiến chuyên gia"; mã trong tiêu đề hỏi lại VNDirect để chắc là mã thật |
 
 \* chỉ lấy bài có dấu hiệu đang lan trên mạng hoặc có phốt (xem `SOCIAL_WORDS`, `DRAMA_WORDS` trong `core/rank.ts`).
 
@@ -84,6 +87,8 @@ danh sách này lúc build.
 - **DOJI**: API báo "Site off-line".
 - **Petrolimex** (`petrolimex.com.vn`): giá tải bằng JS qua API có mã hoá; webgia.com trả HTML tĩnh.
 - **PVOil**: trả 403. **Saostar, Yan, 2sao, Ngôi sao, Tiin, Afamily**: không còn RSS.
+- **Khuyến nghị của VNDirect** (`/v4/recommendations`, giá mục tiêu của các công ty chứng khoán): dừng cập nhật
+  từ 23/07/2026. **TCBS**: API chặn bằng Cloudflare.
 
 ## Cách hoạt động
 
@@ -95,6 +100,8 @@ danh sách này lúc build.
   (tránh gộp "TP.HCM bổ nhiệm cán bộ" với "Hà Tĩnh bổ nhiệm cán bộ"). Test hồi quy dùng đúng 509 bài đó
   (`core/__fixtures__/articles-2026-10-20.json`).
 - Xếp hạng: độ mới (giảm dần theo giờ) + số báo cùng đưa + điểm cộng cho nhãn Phốt / MXH / Địa chính trị.
+- Chứng khoán (`core/stocks.ts`): trong giờ giao dịch (8:45–15:15 thứ Hai–Sáu) tải cùng mỗi lượt 20 phút,
+  ngoài giờ 2 giờ / lần. Mỗi lượt 4–5 request nhỏ tới VNDirect vì lọc, sắp xếp làm ngay trên server của họ.
 - So sánh giá: vàng và tỷ giá so với giá ghi được cách đây ≥ 20 giờ ("hôm qua"); xăng dầu so với kỳ điều
   chỉnh trước. Vì so với dữ liệu tự ghi, ngày đầu chạy chưa có mức tăng / giảm. Extension, GitHub Pages và
   server trên Mac mỗi nơi ghi lịch sử riêng.

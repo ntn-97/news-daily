@@ -5,6 +5,7 @@ import type { Brief } from '@shared/types'
 import { ThemeToggle } from '@/components/ThemeToggle'
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
+import { MarketBoard } from '@/features/market/MarketBoard'
 import { SectionBlock } from '@/features/news/SectionBlock'
 import { PriceBoard, PriceBoardSkeleton } from '@/features/prices/PriceBoard'
 import { TrendsPanel } from '@/features/trends/TrendsPanel'
@@ -99,6 +100,7 @@ function Masthead({
 function SectionNav({ brief, reading }: { brief: Brief; reading: Reading }) {
   const links = [
     { id: 'gia-ca', label: 'Giá cả', count: 0 },
+    ...(brief.market ? [{ id: 'chung-khoan', label: 'Chứng khoán', count: 0 }] : []),
     ...brief.sections.map((s) => ({
       id: s.id,
       label: s.title,
@@ -148,7 +150,8 @@ function Footer({ brief }: { brief: Brief }) {
       <p>
         Tổng hợp từ RSS của VnExpress, Tuổi Trẻ, Thanh Niên, Dân trí, Znews, Kenh14, BBC Tiếng Việt, RFI Tiếng Việt;
         xu hướng tìm kiếm từ Google Trends. Giá vàng PNJ, vàng thế giới gold-api.com, tỷ giá Vietcombank, giá xăng dầu
-        Petrolimex (qua webgia.com). Bấm vào tin để đọc bài gốc trên báo.
+        Petrolimex (qua webgia.com). Chứng khoán: chỉ số và giá cổ phiếu VNDirect, bài nhận định Vietstock. Bấm vào tin
+        để đọc bài gốc trên báo.
       </p>
       <p>
         Facebook không cho đọc bảng tin khi chưa đăng nhập, nên “Nóng trên mạng” lấy từ các chuyên mục báo chuyên đưa
@@ -169,6 +172,7 @@ function Body({ brief, reading }: { brief: Brief; reading: Reading }) {
           <PriceBoard gold={brief.gold} fuel={brief.fuel} fx={brief.fx} />
           <TrendsPanel trends={brief.trends} />
         </div>
+        {brief.market && <MarketBoard market={brief.market} />}
         {empty && brief.refreshedAt === null ? (
           <div className="flex items-center justify-center gap-2 py-16 text-muted-foreground">
             <Loader2 className="size-5 animate-spin" /> Đang tải tin từ các báo, chừng mười giây…

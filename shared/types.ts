@@ -110,6 +110,60 @@ export interface Trend {
   news: RelatedLink[]
 }
 
+export interface MarketIndex {
+  /** Mã của nguồn: VNINDEX, VN30, HNX, UPCOM */
+  code: string
+  label: string
+  close: number
+  change: number
+  pctChange: number
+  /** Giá trị khớp lệnh, đồng */
+  value: number
+  /** Số mã tăng / giảm / đứng giá */
+  advances: number
+  declines: number
+  noChange: number
+}
+
+export interface MarketStock {
+  code: string
+  /** nghìn đồng */
+  close: number
+  pctChange: number
+  /** Giá trị khớp lệnh, đồng */
+  value: number
+  /** Đóng cửa ở giá trần / sàn */
+  ceiling: boolean
+  floor: boolean
+}
+
+/** Bài nhận định / ý kiến chuyên gia; `tickers` là mã nhắc trong tiêu đề, đã đối chiếu là mã thật */
+export interface MarketNote {
+  title: string
+  link: string
+  source: string
+  publishedAt: string
+  tickers: string[]
+}
+
+export interface MarketBoard {
+  /** Phiên của chỉ số, "2026-10-26" */
+  session: string
+  /** Giờ nguồn ghi cho chỉ số, "15:33:00" */
+  time: string
+  indices: MarketIndex[]
+  /** Phiên của danh sách tăng / giảm — có thể cũ hơn chỉ số khi nguồn chưa có số liệu phiên đang chạy */
+  moversSession: string
+  gainers: MarketStock[]
+  losers: MarketStock[]
+  /** Bài nhận định thị trường mới nhất */
+  outlook: MarketNote[]
+  /** Bài chuyên gia nhắc tới mã cụ thể */
+  picks: MarketNote[]
+  /** Giá phiên gần nhất của các mã trong `picks` */
+  quotes: Record<string, MarketStock>
+}
+
 export interface SourceError {
   source: string
   message: string
@@ -121,6 +175,8 @@ export interface Brief {
   gold: GoldBoard | null
   fuel: FuelBoard | null
   fx: FxBoard | null
+  /** Bản tin của extension lưu từ phiên bản trước không có trường này — giao diện coi như null */
+  market: MarketBoard | null
   trends: Trend[]
   /** Lần làm mới gần nhất đã xong; null nếu server vừa khởi động và chưa lấy được gì */
   refreshedAt: string | null

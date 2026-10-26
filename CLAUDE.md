@@ -30,6 +30,6 @@ mà không dùng được và vì sao.
 - Màu riêng (sun, up/down, tag-*) là token trong `src/index.css`, chọn riêng cho nền sáng và nền tối.
   Giá tăng xanh, giảm đỏ theo thói quen đọc bảng giá ở Việt Nam.
 - `manifest.json` của extension sinh trong `vite.config.ts`; `host_permissions` lấy từ `core/sources.ts` và các URL
-  giá trong `core/prices.ts`.
+  giá trong `core/prices.ts`, `core/stocks.ts`.
 - `node --watch` (npm run dev) khởi động lại API khi sửa file server và chạy ngay một lượt làm mới.
   Tắt `npm run dev` phải tắt cả tiến trình `node --watch` cha, không chỉ tiến trình giữ cổng 4600.
